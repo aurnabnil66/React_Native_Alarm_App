@@ -1,131 +1,88 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- */
-
 import React from 'react';
-import type {PropsWithChildren} from 'react';
+import {StyleSheet, Text, TouchableOpacity} from 'react-native';
+import 'react-native-gesture-handler';
+import {NavigationContainer, ParamListBase} from '@react-navigation/native';
 import {
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+  createStackNavigator,
+  StackNavigationOptions,
+  StackScreenProps,
+} from '@react-navigation/stack';
 
-import {
-  Colors,
-  DebugInstructions,
-  Header,
-  LearnMoreLinks,
-  ReloadInstructions,
-} from 'react-native/Libraries/NewAppScreen';
+import Home from './src/screens/Alarms';
+import Edit from './src/screens/Edit';
+import Ring from './src/screens/Ring';
 
-type SectionProps = PropsWithChildren<{
+// Create a type for your navigation params
+export type RootStackParamList = {
+  Alarms: undefined;
+  Edit: undefined;
+  Ring: {alarmUid: string}; // Assume Ring screen takes a parameter 'alarmUid'
+};
+
+const Stack = createStackNavigator<RootStackParamList>();
+
+export default function App() {
+  return (
+    <NavigationContainer navigationInChildEnabled={true}>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Alarms"
+          component={Home}
+          options={({
+            navigation,
+          }: StackScreenProps<RootStackParamList, 'Alarms'>) => ({
+            ...headerStyles,
+            title: 'Alarms',
+            headerRight: () => (
+              <AddButton
+                title={'+ '}
+                onPress={() => navigation.navigate('Edit')}
+              />
+            ),
+          })}
+        />
+        <Stack.Screen name="Edit" component={Edit} options={headerStyles} />
+        <Stack.Screen
+          name="Ring"
+          component={Ring}
+          options={{headerShown: false}}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
+type AddButtonProps = {
   title: string;
-}>;
+  onPress: () => void;
+};
 
-function Section({children, title}: SectionProps): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
+function AddButton({title, onPress}: AddButtonProps) {
   return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
+    <TouchableOpacity style={styles.button} onPress={onPress}>
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
   );
 }
 
-function App(): React.JSX.Element {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  /*
-   * To keep the template simple and small we're adding padding to prevent view
-   * from rendering under the System UI.
-   * For bigger apps the reccomendation is to use `react-native-safe-area-context`:
-   * https://github.com/AppAndFlow/react-native-safe-area-context
-   *
-   * You can read more about it here:
-   * https://github.com/react-native-community/discussions-and-proposals/discussions/827
-   */
-  const safePadding = '5%';
-
-  return (
-    <View style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <ScrollView
-        style={backgroundStyle}>
-        <View style={{paddingRight: safePadding}}>
-          <Header/>
-        </View>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-            paddingHorizontal: safePadding,
-            paddingBottom: safePadding,
-          }}>
-          <Section title="Step One">
-            Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-            screen and then come back to see your edits.
-          </Section>
-          <Section title="See Your Changes">
-            <ReloadInstructions />
-          </Section>
-          <Section title="Debug">
-            <DebugInstructions />
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          <LearnMoreLinks />
-        </View>
-      </ScrollView>
-    </View>
-  );
-}
+export const headerStyles: StackNavigationOptions = {
+  headerStyle: {
+    elevation: 0,
+  },
+  headerTintColor: '#000',
+  headerTitleStyle: {
+    fontWeight: 'bold',
+  },
+};
 
 const styles = StyleSheet.create({
-  sectionContainer: {
-    marginTop: 32,
-    paddingHorizontal: 24,
+  button: {
+    backgroundColor: 'transparent',
+    padding: 10,
   },
-  sectionTitle: {
-    fontSize: 24,
-    fontWeight: '600',
-  },
-  sectionDescription: {
-    marginTop: 8,
-    fontSize: 18,
-    fontWeight: '400',
-  },
-  highlight: {
-    fontWeight: '700',
+  buttonText: {
+    color: 'black',
+    fontWeight: 'bold',
+    fontSize: 25,
   },
 });
-
-export default App;
