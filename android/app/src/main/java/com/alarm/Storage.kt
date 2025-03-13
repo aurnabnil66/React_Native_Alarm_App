@@ -2,7 +2,7 @@ package com.alarm
 
 import android.content.Context
 import android.content.SharedPreferences
-import com.app.R
+import com.react_native_alarm_app.R
 
 class Storage {
 

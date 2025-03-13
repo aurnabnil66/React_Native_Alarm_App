@@ -12,7 +12,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import com.alarm.receivers.AlarmReceiver
 import com.alarm.receivers.DismissReceiver
-import com.app.R
+import com.react_native_alarm_app.R
 import java.util.*
 
 class Helper {
